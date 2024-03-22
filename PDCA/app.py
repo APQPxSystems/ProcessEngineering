@@ -3,9 +3,30 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import altair as alt
+from io import StringIO
 
 # App Configurations
 st.set_page_config(page_title='PE PDCA', layout='wide')
+hide_st_style = """
+                <style>
+                #MainMenu {visibility:hidden;}
+                footer {visibility:hidden;}
+                header {visibility:hidden;}
+                </style>
+                """
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
+# Remove top white space
+st.markdown("""
+        <style>
+            .block-container {
+                    padding-top: 0rem;
+                    padding-bottom: 0rem;
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
 
 # Function to create a database table
 def create_table():
@@ -52,12 +73,44 @@ def update_data(task_id, task, dri, start_date, end_date, status, remarks):
     conn.commit()
     conn.close()
 
+# Function to handle file upload and concatenate with the database
+def upload_pdca_file(file):
+    if file is not None:
+        content = file.read().decode('utf-8')  # Decode bytes to string
+        # Assuming the file is a CSV file
+        uploaded_df = pd.read_csv(StringIO(content))
+        
+        # Generate unique IDs for the uploaded DataFrame
+        last_id = display_data_as_df()['id'].max()
+        if pd.isnull(last_id):
+            last_id = 0
+        else:
+            last_id = int(last_id)  # Cast to integer
+        uploaded_df['id'] = range(last_id + 1, last_id + 1 + len(uploaded_df))
+        
+        # Concatenate the uploaded data with the existing database
+        concatenated_df = pd.concat([display_data_as_df(), uploaded_df], ignore_index=True)
+        # Update the database with concatenated data
+        conn = sqlite3.connect('pepdca.db')
+        concatenated_df.to_sql('pdca', conn, if_exists='replace', index=False)
+        conn.close()
+        st.success('PDCA data uploaded and concatenated successfully.')
+
 # Function to display data from the database as a pandas dataframe
 def display_data_as_df():
     conn = sqlite3.connect('pepdca.db')
     df = pd.read_sql_query("SELECT * FROM pdca", conn)
     conn.close()
     return df
+
+# # Function to delete all contents of the database
+# def delete_all_data():
+#     conn = sqlite3.connect('pepdca.db')
+#     c = conn.cursor()
+#     c.execute('''DELETE FROM pdca''')
+#     conn.commit()
+#     conn.close()
+#     st.success('All data deleted successfully.')
 
 def edit_pdca():
     df = display_data_as_df()
@@ -124,8 +177,13 @@ def main():
         st.write('________________________________________________')
 
         # Choose desired activity
-        desired_activity = st.selectbox('What do you want to do?', ['View data', 'Add task', 'Edit task', 'Delete task'])
+        desired_activity = st.selectbox('What do you want to do?', ['View data', 'Add task', 'Edit task', 'Delete task', 'Upload existing PDCA'])
         st.write('________________________________________________')
+        
+        # # Add option to delete all contents of the database
+        # if desired_activity == 'Delete all data':
+        #     if st.button('Delete All Data'):
+        #         delete_all_data()
 
         if desired_activity == 'Add task':
             # Adding data
@@ -145,6 +203,13 @@ def main():
         if desired_activity == 'Edit task':
             # Edit PDCA items
             edit_pdca()
+            
+        # Add option to upload existing PDCA file
+        if desired_activity == 'Upload existing PDCA':
+            st.subheader('Upload Existing PDCA')
+            uploaded_file = st.file_uploader("Upload PDCA file", type=['csv'])
+            if st.button('Concatenate with Database'):
+                upload_pdca_file(uploaded_file)
 
         if desired_activity == 'Delete task':
             # Delete PDCA items
@@ -211,3 +276,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+with open('style.css') as f:
+    css = f.read()
+
+st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
