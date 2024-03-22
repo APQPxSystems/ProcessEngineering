@@ -188,13 +188,22 @@ def main():
         if desired_activity == 'Add task':
             # Adding data
             st.subheader('Add PDCA Items')
-            task = st.text_input('Input new task')
-            dri = st.selectbox('Select DRI', ['Ben', 'Carl', 'Christian', 'Gian', 'Jaivie',
-                                            'Jhea', 'Kelly', 'Kent', 'Rhea'])
-            start_date = st.date_input('Select start date')
-            end_date = st.date_input('Select target end date')
-            status = st.selectbox('Select status', ['Open', 'Closed'])
-            remarks = st.selectbox('Remarks', ['On-going', 'Complete', 'Delay'])
+            task_col, dri_col = st.columns([4,1])
+            with task_col:
+                task = st.text_input('Input new task')
+            with dri_col:
+                dri = st.selectbox('Select DRI', ['Ben', 'Carl', 'Christian', 'Gian', 'Jaivie',
+                                                'Jhea', 'Kelly', 'Kent', 'Rhea'])
+            start_col, end_col = st.columns([1,1])
+            with start_col:
+                start_date = st.date_input('Select start date')
+            with end_col:
+                end_date = st.date_input('Select target end date')
+            status_col, remarks_col = st.columns([1,1])
+            with status_col:
+                status = st.selectbox('Select status', ['Open', 'Closed'])
+            with remarks_col:
+                remarks = st.selectbox('Remarks', ['On-going', 'Complete', 'Delay'])
 
             if st.button('Add Data'):
                 insert_data(task, dri, start_date, end_date, status, remarks)
