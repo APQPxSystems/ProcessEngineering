@@ -138,14 +138,14 @@ def edit_pdca():
 
 # Main function to run the streamlit app
 def main():
-    st.title('PROCESS ENGINEERING PDCA APP')
+    st.markdown("<p class='app_title'>PROCESS ENGINEERING PDCA</p>", unsafe_allow_html=True)
     st.write('________________________________________________')
     
     # Create table if it doesn't exist
     create_table()
     
     # Select user role
-    st.subheader('Select user type')
+    st.markdown("<p class='app_sub_title'>SELECT USER TYPE TO CONTNUE</p>", unsafe_allow_html=True)
     login_col1, login_col2 = st.columns([1,1])
     with login_col1:
         user_role = st.selectbox('Select user type', ['Viewer', 'Editor'])
