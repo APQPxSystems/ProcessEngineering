@@ -150,7 +150,7 @@ def main():
     create_table()
     
     # Select user role
-    st.markdown("<p class='app_sub_title'>SELECT USER TYPE TO CONTNUE</p>", unsafe_allow_html=True)
+    st.markdown("<p class='app_sub_title'>SELECT USER TYPE TO CONTINUE</p>", unsafe_allow_html=True)
     login_col1, login_col2 = st.columns([1,1])
     with login_col1:
         user_role = st.selectbox('Select user type', ['Viewer', 'Editor'])
