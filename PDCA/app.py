@@ -280,6 +280,9 @@ def main():
         st.write(filtered_dri_df)
         st.write('________________________________________________')
 
+    else:
+      st.warning('Please input the correct password for the chosen user type.')
+
 if __name__ == '__main__':
     main()
 
