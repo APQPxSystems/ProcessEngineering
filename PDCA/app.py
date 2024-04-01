@@ -160,29 +160,31 @@ def main():
     if user_role == 'Editor' and user_pass == 'PEadmin':
         
         df = display_data_as_df()
-        
-        # Main dashboard chart
-        # Group by DRI and Remarks and count the number of tasks
-        main_chart_df = df.groupby(['dri', 'remarks']).size().reset_index(name='count')
-
-        # Plot using Altair
-        main_chart = alt.Chart(main_chart_df).mark_bar().encode(
-            x='dri:N',
-            y='count:Q',
-            color=alt.Color('remarks:N', scale=alt.Scale(domain=['On-going', 'Complete', 'Delay'],
-                                                        range=['green', 'blue', 'red']),
-                        legend=alt.Legend(title='Remarks'))
-        ).properties(
-            width=600,
-            height=400,
-            title='Count of Tasks per DRI'
-        )
-        st.altair_chart(main_chart, use_container_width=True)
-        st.write('________________________________________________')
 
         # Choose desired activity
         desired_activity = st.selectbox('What do you want to do?', ['View data', 'Add task', 'Edit task', 'Delete task', 'Upload existing PDCA'])
         st.write('________________________________________________')
+
+        if desired_activity == 'View data':
+            # Main dashboard chart
+            # Group by DRI and Remarks and count the number of tasks
+            main_chart_df = df.groupby(['dri', 'remarks']).size().reset_index(name='count')
+    
+            # Plot using Altair
+            main_chart = alt.Chart(main_chart_df).mark_bar().encode(
+                x='dri:N',
+                y='count:Q',
+                color=alt.Color('remarks:N', scale=alt.Scale(domain=['On-going', 'Complete', 'Delay'],
+                                                            range=['green', 'blue', 'red']),
+                            legend=alt.Legend(title='Remarks'))
+            ).properties(
+                width=600,
+                height=400,
+                title='Count of Tasks per DRI'
+            )
+            st.altair_chart(main_chart, use_container_width=True)
+            st.write('________________________________________________')
+            
         
         # # Add option to delete all contents of the database
         # if desired_activity == 'Delete all data':
