@@ -138,8 +138,12 @@ def edit_pdca():
 
 # Main function to run the streamlit app
 def main():
-    st.markdown("<p class='app_title'>PROCESS ENGINEERING PDCA</p>", unsafe_allow_html=True)
+    # App title and info
+    st.markdown("<p class='app_sub_title'>MANUFACTURING ENGINEERING DEPARTMENT | SYSTEMS ENGINEERING</p>", unsafe_allow_html=True)
+    # Tagline
+    st.markdown("<p class='tagline'>Mitigating Encumbrances; Moving towards Excellence</p>", unsafe_allow_html=True)
     st.write('________________________________________________')
+    st.markdown("<p class='app_title'>PROCESS ENGINEERING PDCA</p>", unsafe_allow_html=True)
     
     # Create table if it doesn't exist
     create_table()
