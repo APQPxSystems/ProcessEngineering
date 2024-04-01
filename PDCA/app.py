@@ -30,7 +30,7 @@ st.markdown("""
 
 # Function to create a database table
 def create_table():
-    conn = sqlite3.connect('pepdca.db')
+    conn = sqlite3.connect('pe_pdca.db')
     c = conn.cursor()
     c.execute(
         '''CREATE TABLE IF NOT EXISTS pdca
@@ -47,7 +47,7 @@ def create_table():
 
 # Function to insert data into the database
 def insert_data(task, dri, start_date, end_date, status, remarks):
-    conn = sqlite3.connect('pepdca.db')
+    conn = sqlite3.connect('pe_pdca.db')
     c = conn.cursor()
     c.execute('''
             INSERT INTO pdca (task, dri, start_date, end_date, status, remarks) 
@@ -58,7 +58,7 @@ def insert_data(task, dri, start_date, end_date, status, remarks):
 
 # Function to delete data from the database
 def delete_data(task_id):
-    conn = sqlite3.connect('pepdca.db')
+    conn = sqlite3.connect('pe_pdca.db')
     c = conn.cursor()
     c.execute('''DELETE FROM pdca WHERE id = ?''', (task_id,))
     conn.commit()
@@ -66,7 +66,7 @@ def delete_data(task_id):
 
 # Function to update data in the database
 def update_data(task_id, task, dri, start_date, end_date, status, remarks):
-    conn = sqlite3.connect('pepdca.db')
+    conn = sqlite3.connect('pe_pdca.db')
     c = conn.cursor()
     c.execute('''UPDATE pdca SET task=?, dri=?, start_date=?, end_date=?, status=?, remarks=? WHERE id=?''',
             (task, dri, start_date, end_date, status, remarks, task_id))
@@ -91,27 +91,28 @@ def upload_pdca_file(file):
         # Concatenate the uploaded data with the existing database
         concatenated_df = pd.concat([display_data_as_df(), uploaded_df], ignore_index=True)
         # Update the database with concatenated data
-        conn = sqlite3.connect('pepdca.db')
+        conn = sqlite3.connect('pe_pdca.db')
         concatenated_df.to_sql('pdca', conn, if_exists='replace', index=False)
         conn.close()
         st.success('PDCA data uploaded and concatenated successfully.')
 
 # Function to display data from the database as a pandas dataframe
 def display_data_as_df():
-    conn = sqlite3.connect('pepdca.db')
+    conn = sqlite3.connect('pe_pdca.db')
     df = pd.read_sql_query("SELECT * FROM pdca", conn)
     conn.close()
     return df
 
-# # Function to delete all contents of the database
-# def delete_all_data():
-#     conn = sqlite3.connect('pepdca.db')
-#     c = conn.cursor()
-#     c.execute('''DELETE FROM pdca''')
-#     conn.commit()
-#     conn.close()
-#     st.success('All data deleted successfully.')
+# Function to delete all contents of the database
+def delete_all_data():
+    conn = sqlite3.connect('apqppdca.db')
+    c = conn.cursor()
+    c.execute('''DELETE FROM pdca''')
+    conn.commit()
+    conn.close()
+    st.success('All data deleted successfully.')
 
+# Function to edit PDCA items
 def edit_pdca():
     df = display_data_as_df()
     st.subheader('Edit PDCA Items')
@@ -144,12 +145,12 @@ def main():
     st.markdown("<p class='tagline'>Mitigating Encumbrances; Moving towards Excellence</p>", unsafe_allow_html=True)
     st.write('________________________________________________')
     st.markdown("<p class='app_title'>PROCESS ENGINEERING PDCA</p>", unsafe_allow_html=True)
-    
+        
     # Create table if it doesn't exist
     create_table()
     
     # Select user role
-    st.markdown("<p class='app_sub_title'>SELECT USER TYPE TO CONTINUE</p>", unsafe_allow_html=True)
+    st.markdown("<p class='app_sub_title'>SELECT USER TYPE TO CONTNUE</p>", unsafe_allow_html=True)
     login_col1, login_col2 = st.columns([1,1])
     with login_col1:
         user_role = st.selectbox('Select user type', ['Viewer', 'Editor'])
@@ -162,14 +163,19 @@ def main():
         df = display_data_as_df()
 
         # Choose desired activity
-        desired_activity = st.selectbox('What do you want to do?', ['View data', 'Add task', 'Edit task', 'Delete task', 'Upload existing PDCA'])
+        desired_activity = st.selectbox('What do you want to do?', ['Delete all data', 'View data', 'Add task', 'Edit task', 'Delete task', 'Upload existing PDCA'])
         st.write('________________________________________________')
-
+        
+        # Add option to delete all contents of the database
+        if desired_activity == 'Delete all data':
+            if st.button('Delete All Data'):
+                delete_all_data()
+        
         if desired_activity == 'View data':
             # Main dashboard chart
             # Group by DRI and Remarks and count the number of tasks
             main_chart_df = df.groupby(['dri', 'remarks']).size().reset_index(name='count')
-    
+
             # Plot using Altair
             main_chart = alt.Chart(main_chart_df).mark_bar().encode(
                 x='dri:N',
@@ -184,32 +190,17 @@ def main():
             )
             st.altair_chart(main_chart, use_container_width=True)
             st.write('________________________________________________')
-            
-        
-        # # Add option to delete all contents of the database
-        # if desired_activity == 'Delete all data':
-        #     if st.button('Delete All Data'):
-        #         delete_all_data()
 
         if desired_activity == 'Add task':
             # Adding data
             st.subheader('Add PDCA Items')
-            task_col, dri_col = st.columns([4,1])
-            with task_col:
-                task = st.text_input('Input new task')
-            with dri_col:
-                dri = st.selectbox('Select DRI', ['Ben', 'Carl', 'Christian', 'Gian', 'Jaivie',
-                                                'Jhea', 'Kelly', 'Kent', 'Rhea'])
-            start_col, end_col = st.columns([1,1])
-            with start_col:
-                start_date = st.date_input('Select start date')
-            with end_col:
-                end_date = st.date_input('Select target end date')
-            status_col, remarks_col = st.columns([1,1])
-            with status_col:
-                status = st.selectbox('Select status', ['Open', 'Closed'])
-            with remarks_col:
-                remarks = st.selectbox('Remarks', ['On-going', 'Complete', 'Delay'])
+            task = st.text_input('Input new task')
+            dri = st.selectbox('Select DRI', ['Ben', 'Carl', 'Christian', 'Gian', 'Jaivie',
+                                            'Jhea', 'Kelly', 'Kent', 'Rhea'])
+            start_date = st.date_input('Select start date')
+            end_date = st.date_input('Select target end date')
+            status = st.selectbox('Select status', ['Open', 'Closed'])
+            remarks = st.selectbox('Remarks', ['On-going', 'Complete', 'Delay'])
 
             if st.button('Add Data'):
                 insert_data(task, dri, start_date, end_date, status, remarks)
@@ -289,13 +280,10 @@ def main():
         st.write(filtered_dri_df)
         st.write('________________________________________________')
 
-    else:
-        st.warning('Please input the correct password for the chosen user type.')
-
 if __name__ == '__main__':
     main()
 
-with open('PDCA/style.css') as f:
+with open('pepdca\style.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
