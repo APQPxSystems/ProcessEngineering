@@ -163,7 +163,7 @@ def main():
         df = display_data_as_df()
 
         # Choose desired activity
-        desired_activity = st.selectbox('What do you want to do?', ['Delete all data', 'View data', 'Add task', 'Edit task', 'Delete task', 'Upload existing PDCA'])
+        desired_activity = st.selectbox('What do you want to do?', ['View data', 'Add task', 'Edit task', 'Delete task', 'Upload existing PDCA'])
         st.write('________________________________________________')
         
         # Add option to delete all contents of the database
