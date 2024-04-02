@@ -158,7 +158,7 @@ def main():
         user_pass = st.text_input('Input user password', type='password')
     
     # User role -- editor
-    if user_role == 'Editor' and user_pass == 'PEadmin':
+    if user_role == 'Editor' and user_pass == 'PE2024admin':
         
         df = display_data_as_df()
 
