@@ -67,3 +67,9 @@
     align-items: center; /* Vertical centering */
     justify-content: center; /* Horizontal centering */
 }
+
+/*Sidebar*/
+.st-emotion-cache-dvne4q {
+    padding: 6rem 1.5rem;
+    background-color: grey;
+}
