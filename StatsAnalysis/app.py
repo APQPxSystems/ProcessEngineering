@@ -37,7 +37,7 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # Sidebar Configurations
 with st.sidebar:
-    st.write("## ME3 - Process Engineering")
+    st.write("# ME3-Process Engineering")
     st.write("__________________________________")
     st.write("## How to Use:")
     st.write("#### 1. Upload your dataset in a CSV format.")
