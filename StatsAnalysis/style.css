@@ -20,7 +20,7 @@
     overflow: auto;
     -webkit-box-align: center;
     align-items: center;
-    background-color: royalblue;
+    background-color: black;
 }
 
 /*App Title*/
@@ -52,7 +52,7 @@ h4 {
     background-color: rgb(5, 92, 157);
     border-radius: 0.5rem;
     color: white;
-    background-color: black;
+    background-color: darkslategray;
 }
 
 /*Sidebar*/
