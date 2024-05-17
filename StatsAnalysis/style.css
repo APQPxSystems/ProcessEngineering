@@ -43,6 +43,18 @@ h4 {
     line-height: 1.2;
 }
 
+/*Dropbox*/
+.st-emotion-cache-14ipyc0 {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    padding: 1rem;
+    background-color: rgb(5, 92, 157);
+    border-radius: 0.5rem;
+    color: white;
+    background-color: black;
+}
+
 /*Sidebar*/
 .st-emotion-cache-6qob1r {
     position: relative;
