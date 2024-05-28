@@ -337,6 +337,10 @@ if raw_data is not None:
         if visualization == "Normal Curve with ± 3 Sigma":
             usl = st.number_input("Specify Upper Specification Limit (USL)", min_value=1)
             lsl = st.number_input("Specify Lower Specification Limit (LSL)", min_value=1)
+            
+            # Calculate the median
+            median = (usl + lsl) / 2
+
             # Display normal distribution with reference lines for each column
             st.write("Normal Distribution with ± 3 Sigma Reference Lines for Each Column:")
 
@@ -354,11 +358,12 @@ if raw_data is not None:
                 p = stats.norm.pdf(x, mean, std_dev)
                 plt.plot(x, p, label='Normal Curve')
 
-                # Add reference lines for USL, LSL, and ±3 sigma
+                # Add reference lines for USL, LSL, ±3 sigma, and median
                 for val, color, label in [(usl, 'r', 'USL'),
                                         (lsl, 'g', 'LSL'),
                                         (mean + 3 * std_dev, 'b', '+3σ'),
-                                        (mean - 3 * std_dev, 'b', '-3σ')]:
+                                        (mean - 3 * std_dev, 'b', '-3σ'),
+                                        (median, 'm', 'Median')]:
                     plt.axvline(x=val, color=color, linestyle='--', label=label)
 
                 plt.xlabel("Value")
