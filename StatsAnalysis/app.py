@@ -360,10 +360,10 @@ if raw_data is not None:
 
                 # Add reference lines for USL, LSL, ±3 sigma, and median
                 for val, color, label in [(usl, 'r', 'USL'),
-                                        (lsl, 'g', 'LSL'),
+                                        (lsl, 'r', 'LSL'),
                                         (mean + 3 * std_dev, 'b', '+3σ'),
                                         (mean - 3 * std_dev, 'b', '-3σ'),
-                                        (median, 'm', 'Median')]:
+                                        (median, 'g', 'Median')]:
                     plt.axvline(x=val, color=color, linestyle='--', label=label)
 
                 plt.xlabel("Value")
