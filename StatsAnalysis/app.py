@@ -370,18 +370,21 @@ if raw_data is not None:
 
             # Display counts
             st.write(f"GOOD: {good_count}, NO GOOD: {no_good_count}")
-
+            
             # Display tables of GOOD and NO GOOD columns with index starting from 1
-            st.write("GOOD Columns:")
-            good_df = pd.DataFrame(good_columns, columns=["GOOD Columns"])
-            good_df.index += 1
-            st.table(good_df)
+            g_col, ng_col = st.columns([1,1])
 
-            st.write("NO GOOD Columns:")
-            no_good_df = pd.DataFrame(no_good_columns, columns=["NO GOOD Columns"])
-            no_good_df.index += 1
-            st.table(no_good_df)
+            with g_col: 
+                good_df = pd.DataFrame(good_columns, columns=["LIST OF GOOD"])
+                good_df.index += 1
+                st.table(good_df)
 
+            with ng_col:
+                no_good_df = pd.DataFrame(no_good_columns, columns=["LIST OF NO GOOD"])
+                no_good_df.index += 1
+                st.table(no_good_df)
+
+            st.write("_______________________________________")
             # Display normal distribution with reference lines for each column
             st.write("Normal Distribution with ± 3 Sigma Reference Lines for Each Column:")
 
