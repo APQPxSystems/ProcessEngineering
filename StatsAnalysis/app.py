@@ -345,6 +345,11 @@ if raw_data is not None:
             global_min = float('inf')
             global_max = float('-inf')
             
+            good_count = 0
+            no_good_count = 0
+            good_columns = []
+            no_good_columns = []
+
             for col in raw_data.columns:
                 mean = raw_data[col].mean()
                 std_dev = raw_data[col].std()
@@ -354,6 +359,28 @@ if raw_data is not None:
                     global_min = col_min
                 if col_max > global_max:
                     global_max = col_max
+
+                # Determine if the column is GOOD or NO GOOD
+                if (mean - 3 * std_dev >= lsl) and (mean + 3 * std_dev <= usl):
+                    good_count += 1
+                    good_columns.append(col)
+                else:
+                    no_good_count += 1
+                    no_good_columns.append(col)
+
+            # Display counts
+            st.write(f"GOOD: {good_count}, NO GOOD: {no_good_count}")
+
+            # Display tables of GOOD and NO GOOD columns with index starting from 1
+            st.write("GOOD Columns:")
+            good_df = pd.DataFrame(good_columns, columns=["GOOD Columns"])
+            good_df.index += 1
+            st.table(good_df)
+
+            st.write("NO GOOD Columns:")
+            no_good_df = pd.DataFrame(no_good_columns, columns=["NO GOOD Columns"])
+            no_good_df.index += 1
+            st.table(no_good_df)
 
             # Display normal distribution with reference lines for each column
             st.write("Normal Distribution with ± 3 Sigma Reference Lines for Each Column:")
