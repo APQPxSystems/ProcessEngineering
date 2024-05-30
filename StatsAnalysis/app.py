@@ -337,9 +337,23 @@ if raw_data is not None:
         if visualization == "Normal Curve with ± 3 Sigma":
             usl = st.number_input("Specify Upper Specification Limit (USL)", min_value=1)
             lsl = st.number_input("Specify Lower Specification Limit (LSL)", min_value=1)
-            
+
             # Calculate the median
             median = (usl + lsl) / 2
+
+            # Calculate global xmin and xmax
+            global_min = float('inf')
+            global_max = float('-inf')
+            
+            for col in raw_data.columns:
+                mean = raw_data[col].mean()
+                std_dev = raw_data[col].std()
+                col_min = mean - 4 * std_dev
+                col_max = mean + 4 * std_dev
+                if col_min < global_min:
+                    global_min = col_min
+                if col_max > global_max:
+                    global_max = col_max
 
             # Display normal distribution with reference lines for each column
             st.write("Normal Distribution with ± 3 Sigma Reference Lines for Each Column:")
@@ -350,27 +364,25 @@ if raw_data is not None:
                 # Fit a normal distribution to the data
                 mean = raw_data[col].mean()
                 std_dev = raw_data[col].std()
-                
+
                 # Plot normal distribution
-                xmin = mean - 4 * std_dev
-                xmax = mean + 4 * std_dev
-                x = np.linspace(xmin, xmax, 100)
+                x = np.linspace(global_min, global_max, 100)
                 p = stats.norm.pdf(x, mean, std_dev)
                 plt.plot(x, p, label='Normal Curve')
 
                 # Add reference lines for USL, LSL, ±3 sigma, and median
                 for val, color, label in [(usl, 'r', 'USL'),
-                                        (lsl, 'r', 'LSL'),
-                                        (mean + 3 * std_dev, 'b', '+3σ'),
-                                        (mean - 3 * std_dev, 'b', '-3σ'),
-                                        (median, 'g', 'Median')]:
+                                            (lsl, 'r', 'LSL'),
+                                            (mean + 3 * std_dev, 'b', '+3σ'),
+                                            (mean - 3 * std_dev, 'b', '-3σ'),
+                                            (median, 'g', 'Median')]:
                     plt.axvline(x=val, color=color, linestyle='--', label=label)
 
                 plt.xlabel("Value")
                 plt.ylabel("Density")
                 plt.title(f"Normal Distribution - {col}")
                 plt.legend()
-                st.pyplot()
+                st.pyplot(plt)
 
         # Scatter Plot
         if visualization == "Scatter Plot":
