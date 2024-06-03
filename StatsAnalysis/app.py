@@ -753,7 +753,7 @@ if action == "Check Assy Boards":
     else:
         st.write("#### No dataset has been uploaded.")
       
-with open('style.css') as f:
+with open('StatsAnalysis/style.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
