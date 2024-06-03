@@ -60,7 +60,7 @@ if raw_data is not None:
     st.write("_________________________________________________")
 
     # Action Selection
-    action = st.selectbox("What do you want to do:", ["Perform a statistical test", "Visualize data"])
+    action = st.selectbox("What do you want to do:", ["Perform a statistical test", "Visualize data", "Check Assy Boards"])
 
     # Perform Statistical Test
     if action == "Perform a statistical test":
@@ -539,9 +539,6 @@ if raw_data is not None:
             sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
             st.pyplot()
 
-else:
-    st.write("#### No dataset has been uploaded.")
-
     # Perform Statistical Test
     if action == "Check Assy Boards":
     
@@ -739,7 +736,8 @@ else:
             except Exception as e:
                 st.error(f"An error occurred: {e}. Please ensure the file is a valid Excel file.")
                 
-
+else:
+    st.write("#### No dataset has been uploaded.")
 
 
 with open('StatsAnalysis/style.css') as f:
