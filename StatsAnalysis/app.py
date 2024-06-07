@@ -37,17 +37,17 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # Sidebar Configurations
 with st.sidebar:
-    st.write("## Stats Analysis Tool for DOE")
+    st.write("## Stats Analysis Tool for DFA")
     st.write("## How to Use:")
-    st.write("#### 1. Upload your dataset in a CSV format.")
-    st.write("#### 2. Select an action: Perform a statistical test or visualize your data.")
+    st.write("#### 1. Select an action: Perform a statistical test, visualize your data, check assy boards.")
+    st.write("#### 2. Upload your data using the requested file type.")
     st.write("#### 3. Select a test to perform or a visualization tool to use.")
     st.write("#### 4. Fill the required inputs if there are any.")
     st.write("__________________________________")
-    st.write("### Kent Katigbak | Systems Engineering")
+    st.write("### Kent Katigbak | Process Engineering")
 
 # App Title and Description
-st.write("# STATISTICAL ANALYSIS TOOL FOR DOE")
+st.write("# STATISTICAL ANALYSIS TOOL FOR DFA")
 st.write("""#### This statistical analysis tool is specialized for the analysis of datasets gathered from Process Engineering's Design of Experiments.""")
 st.write("__________________________________________")
 
