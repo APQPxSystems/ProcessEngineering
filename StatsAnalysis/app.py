@@ -530,9 +530,9 @@ if action == "Visualize data":
             sns.boxplot(data=raw_data)
             
             # Add Median, USL and LSL reference lines
-            plt.axhline(y=median, color='b', linestyle='--', label='Median')
+            plt.axhline(y=median, color='g', linestyle='--', label='Median')
             plt.axhline(y=usl, color='r', linestyle='--', label='USL')
-            plt.axhline(y=lsl, color='g', linestyle='--', label='LSL')
+            plt.axhline(y=lsl, color='r', linestyle='--', label='LSL')
 
             plt.ylabel("Value")
             plt.title("Vertical Boxplot with USL and LSL Reference Lines")
