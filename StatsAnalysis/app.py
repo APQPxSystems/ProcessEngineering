@@ -48,7 +48,7 @@ with st.sidebar:
 
 # App Title and Description
 st.write("# STATISTICAL ANALYSIS TOOL FOR DFA")
-st.write("""#### This statistical analysis tool is specialized for the analysis of datasets gathered from Process Engineering's Design of Experiments.""")
+st.write("""#### This statistical analysis tool is specialized for the analysis of datasets gathered from Process Engineering's Design of Experiments and the Quality Improvement Team's Defect Failure Analysis.""")
 st.write("__________________________________________")
 
 # Action Selection
