@@ -470,7 +470,7 @@ if action == "Check Assy Boards":
         except Exception as e:
             st.error(f"An error occurred: {e}. Please ensure the file is a valid Excel file.")  
 
-with open('StatAnalysis\style.css') as f:
+with open('StatsAnalysis/style.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
