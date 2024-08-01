@@ -1,7 +1,3 @@
-# Statistical Analysis Tool
-# For Analysis of Design of Experiments Data
-# By Kent Katigbak -- Systems Engineering/ Process Engineering Staff
-
 # Import Libraries
 import streamlit as st
 import numpy as np
@@ -34,8 +30,6 @@ st.markdown("""
                 }
         </style>
         """, unsafe_allow_html=True)
-
-st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # Sidebar Configurations
 with st.sidebar:
@@ -256,305 +250,6 @@ if action == "Perform a statistical test":
     else:
         st.write("#### No dataset has been uploaded.")
 
-# Visualize data
-if action == "Visualize data":
-    
-    # File Uploader
-    raw_data = st.file_uploader("Please upload the CSV file of your DOE dataset", type="csv")
-    if raw_data is not None:
-        raw_data = pd.read_csv(raw_data)
-        st.write("#### Preview of DOE Dataset")
-        st.dataframe(raw_data)
-        st.write("_________________________________________________")    
-    
-        visualization = st.selectbox("Select a visualization tool:", ["Histogram", "Normal Curve", 
-                                                                    "Normal Curve with Histogram", "Normal Curve with ± 3 Sigma",
-                                                                    "Scatter Plot", "NC with ± 3 Sigma and Scatter", "Scatter Plot with ± 3 Sigma", 
-                                                                    "Box Plot", "Box Plot with Limits", "Pearson Correlation"])
-        
-        # Histogram
-        if visualization == "Histogram":
-            st.write("#### Generated Histogram/s")
-            bins = st.number_input("Specify number of histogram bins", min_value=1)
-            for column in raw_data.columns:
-                plt.figure(figsize=(8, 6))
-                plt.hist(raw_data[column], bins=bins, edgecolor='black')
-                plt.xlabel(column)
-                plt.ylabel('Frequency')
-                st.pyplot()
-
-        # Normal Curve
-        if visualization == "Normal Curve":
-            usl = st.number_input("Specify Upper Specification Limit (USL)", min_value=1)
-            lsl = st.number_input("Specify Lower Specification Limit (LSL)", min_value=1)
-
-            st.write("Normal Curves with Mean, USL, LSL:")
-            for column in raw_data.columns:
-                plt.figure(figsize=(8, 6))
-
-                # Fit a normal distribution to the data
-                mu, sigma = stats.norm.fit(raw_data[column])
-                xmin, xmax = plt.xlim()
-                x = np.linspace(xmin, xmax, 100)
-                p = stats.norm.pdf(x, mu, sigma)
-
-                # Plot the normal curve
-                plt.plot(x, p, 'k', linewidth=2, label='Normal Curve')  
-
-                # Plot vertical lines for mean, USL, LSL
-                plt.axvline(mu, color='blue', linestyle='--', label='Mean')
-                plt.axvline(usl, color='red', linestyle='--', label='USL')
-                plt.axvline(lsl, color='green', linestyle='--', label='LSL')
-
-                plt.xlabel(column)
-                plt.ylabel('Density')
-                plt.legend()
-
-                # Show plot
-                st.pyplot()
-
-        # Normal Curve with Histogram
-        if visualization == "Normal Curve with Histogram":
-            usl = st.number_input("Specify Upper Specification Limit (USL)", min_value=1)
-            lsl = st.number_input("Specify Lower Specification Limit (LSL)", min_value=1)
-            bins = st.number_input("Specify number of histogram bins", min_value=1)
-            st.write("Histograms with Normal Curve, Mean, USL, LSL:")
-            for column in raw_data.columns:
-                plt.figure(figsize=(10, 6))
-
-                # Plot histogram
-                plt.hist(raw_data[column], bins=bins, density=True, alpha=0.7, color='blue', edgecolor='black', label='Histogram')
-
-                # Fit a normal distribution to the data
-                mu, sigma = stats.norm.fit(raw_data[column])
-                xmin, xmax = plt.xlim()
-                x = np.linspace(xmin, xmax, 100)
-                p = stats.norm.pdf(x, mu, sigma)
-
-                # Plot the normal curve
-                plt.plot(x, p, 'k', linewidth=2, label='Normal Curve')
-
-                # Plot vertical lines for mean, USL, LSL
-                plt.axvline(mu, color='red', linestyle='--', label='Mean')
-                plt.axvline(usl, color='green', linestyle='--', label='USL')
-                plt.axvline(lsl, color='orange', linestyle='--', label='LSL')
-
-                plt.xlabel(column)
-                plt.ylabel('Density')
-                plt.legend()
-
-                # Show plot
-                st.pyplot()
-
-        # Normal Curve with ± 3 Sigma
-        if visualization == "Normal Curve with ± 3 Sigma":
-            usl = st.number_input("Specify Upper Specification Limit (USL)", min_value=1)
-            lsl = st.number_input("Specify Lower Specification Limit (LSL)", min_value=1)
-
-            # Calculate the median
-            median = (usl + lsl) / 2
-
-            # Calculate global xmin and xmax
-            global_min = float('inf')
-            global_max = float('-inf')
-            
-            good_count = 0
-            no_good_count = 0
-            good_columns = []
-            no_good_columns = []
-
-            for col in raw_data.columns:
-                mean = raw_data[col].mean()
-                std_dev = raw_data[col].std()
-                col_min = mean - 4 * std_dev
-                col_max = mean + 4 * std_dev
-                if col_min < global_min:
-                    global_min = col_min
-                if col_max > global_max:
-                    global_max = col_max
-
-                # Determine if the column is GOOD or NO GOOD
-                if (mean - 3 * std_dev >= lsl) and (mean + 3 * std_dev <= usl):
-                    good_count += 1
-                    good_columns.append(col)
-                else:
-                    no_good_count += 1
-                    no_good_columns.append(col)
-
-            # Display counts
-            st.write(f"GOOD: {good_count}, NO GOOD: {no_good_count}")
-            
-            # Display tables of GOOD and NO GOOD columns with index starting from 1
-            g_col, ng_col = st.columns([1,1])
-
-            with g_col: 
-                good_df = pd.DataFrame(good_columns, columns=["LIST OF GOOD"])
-                good_df.index += 1
-                st.table(good_df)
-
-            with ng_col:
-                no_good_df = pd.DataFrame(no_good_columns, columns=["LIST OF NO GOOD"])
-                no_good_df.index += 1
-                st.table(no_good_df)
-
-            st.write("_______________________________________")
-            # Display normal distribution with reference lines for each column
-            st.write("Normal Distribution with ± 3 Sigma Reference Lines for Each Column:")
-
-            for col in raw_data.columns:
-                plt.figure(figsize=(8, 6))
-
-                # Fit a normal distribution to the data
-                mean = raw_data[col].mean()
-                std_dev = raw_data[col].std()
-
-                # Plot normal distribution
-                x = np.linspace(global_min, global_max, 100)
-                p = stats.norm.pdf(x, mean, std_dev)
-                plt.plot(x, p, label='Normal Curve')
-
-                # Add reference lines for USL, LSL, ±3 sigma, and median
-                for val, color, label in [(usl, 'r', 'USL'),
-                                            (lsl, 'r', 'LSL'),
-                                            (mean + 3 * std_dev, 'b', '+3σ'),
-                                            (mean - 3 * std_dev, 'b', '-3σ'),
-                                            (median, 'g', 'Median')]:
-                    plt.axvline(x=val, color=color, linestyle='--', label=label)
-
-                plt.xlabel("Value")
-                plt.ylabel("Density")
-                plt.title(f"Normal Distribution - {col}")
-                plt.legend()
-                st.pyplot(plt)
-
-        # Scatter Plot
-        if visualization == "Scatter Plot":
-            st.write("Scatter Plots for all Pair Combinations:")
-            columns = raw_data.columns
-            num_cols = len(columns)
-
-            for i in range(num_cols):
-                for j in range(i + 1, num_cols):
-                    plt.figure(figsize=(8, 6))
-                    sns.scatterplot(data=raw_data, x=columns[i], y=columns[j])
-                    plt.xlabel(columns[i])
-                    plt.ylabel(columns[j])
-                    plt.title(f"{columns[i]} vs {columns[j]}")
-                    st.pyplot()
-
-        # Normal Curve with ± 3 Sigma and Scatter Plot
-        if visualization == "NC with ± 3 Sigma and Scatter":
-            usl = st.number_input("Specify Upper Specification Limit (USL)", min_value=1)
-            lsl = st.number_input("Specify Lower Specification Limit (LSL)", min_value=1)
-            # Display scatter plot with normal distribution and reference lines for each column
-            st.write("Scatter Plot with Normal Distribution and Reference Lines for Each Column:")
-
-            for col in raw_data.columns:
-                plt.figure(figsize=(10, 6))
-
-                # Scatter plot of actual data points
-                plt.scatter(raw_data.index, raw_data[col], color='skyblue', label='Data Points')
-
-                # Fit a normal distribution to the data
-                mean = raw_data[col].mean()
-                std_dev = raw_data[col].std()
-
-                # Plot normal distribution
-                xmin = mean - 4 * std_dev
-                xmax = mean + 4 * std_dev
-                x = np.linspace(xmin, xmax, 100)
-                p = stats.norm.pdf(x, mean, std_dev)
-                plt.plot(x, p, 'k', label='Normal Curve')
-
-                # Add reference lines for USL, LSL, and ±3 sigma
-                for val, color, label in [(usl, 'r', 'USL'),
-                                        (lsl, 'g', 'LSL'),
-                                        (mean + 3 * std_dev, 'b', '+3σ'),
-                                        (mean - 3 * std_dev, 'b', '-3σ')]:
-                    plt.axvline(x=val, color=color, linestyle='--', label=label)
-
-                plt.xlabel("Index")
-                plt.ylabel("Value")
-                plt.title(f"Scatter Plot with Normal Distribution - {col}")
-                plt.legend()
-                st.pyplot()
-                
-        # Scatter Plot with ± 3 sigma
-        if visualization == "Scatter Plot with ± 3 Sigma":
-            usl = st.number_input("Specify Upper Specification Limit (USL)", min_value=1)
-            lsl = st.number_input("Specify Lower Specification Limit (LSL)", min_value=1)
-            # Display scatter plot with reference lines for ±3 sigma for each column
-            st.write("Scatter Plot with ±3 Sigma Reference Lines for Each Column:")
-
-            for col in raw_data.columns:
-                plt.figure(figsize=(10, 6))
-
-                # Scatter plot of actual data points
-                plt.scatter(raw_data.index, raw_data[col], color='skyblue', label='Data Points')
-
-                # Calculate mean and standard deviation
-                mean = raw_data[col].mean()
-                std_dev = raw_data[col].std()
-
-                # Add reference lines for ±3 sigma
-                upper_3_sigma = mean + 3 * std_dev
-                lower_3_sigma = mean - 3 * std_dev
-
-                plt.axhline(y=upper_3_sigma, color='r', linestyle='--', label='+3σ')
-                plt.axhline(y=lower_3_sigma, color='g', linestyle='--', label='-3σ')
-
-                plt.xlabel("Index")
-                plt.ylabel("Value")
-                plt.title(f"Scatter Plot with ±3 Sigma - {col}")
-                plt.legend()
-                st.pyplot()
-
-        # Box Plot
-        if visualization == "Box Plot":
-            # Display vertical boxplots for all columns
-            st.write("Vertical Boxplots for Each Column:")
-            plt.figure(figsize=(10, 6))
-            sns.boxplot(data=raw_data)
-            plt.ylabel("Value")
-            plt.title("Boxplot for Each Column")
-            plt.xticks(rotation=45)  # Rotate x-axis labels for better visibility
-            st.pyplot()
-
-        # Box Plot with Limits
-        if visualization == "Box Plot with Limits":
-            median = st.number_input("Specify the Median Specification", min_value=1)
-            usl = st.number_input("Specify Upper Specification Limit (USL)", min_value=1)
-            lsl = st.number_input("Specify Lower Specification Limit (LSL)", min_value=1)
-
-            # Display vertical boxplots with USL and LSL reference lines for all columns
-            st.write("Vertical Boxplots with USL and LSL Reference Lines:")
-            plt.figure(figsize=(12, 8))
-            sns.boxplot(data=raw_data)
-            
-            # Add Median, USL and LSL reference lines
-            plt.axhline(y=median, color='b', linestyle='--', label='Median')
-            plt.axhline(y=usl, color='r', linestyle='--', label='USL')
-            plt.axhline(y=lsl, color='g', linestyle='--', label='LSL')
-
-            plt.ylabel("Value")
-            plt.title("Vertical Boxplot with USL and LSL Reference Lines")
-            plt.xticks(rotation=45)  # Rotate x-axis labels for better visibility
-            plt.legend()
-            st.pyplot()
-
-        # Pearson Correlation
-        if visualization == "Pearson Correlation":
-            corr_matrix = raw_data.corr()
-
-            # Display Pearson correlation table with shading
-            st.write("Pearson Correlation Table:")
-            plt.figure(figsize=(10, 8))
-            sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
-            st.pyplot()
-
-    else:
-        st.write("#### No dataset has been uploaded.")
-        
 # Perform Statistical Test
 if action == "Check Assy Boards":
 
@@ -759,12 +454,6 @@ if action == "Check Assy Boards":
 
             st.write("_________________________________________________")
             
-            # Capability Analysis
-            st.write("### Capability Analysis:")
-            Cp = (usl - lsl) / (6 * std_dev_combined)
-            Cpk = min((usl - mean_combined) / (3 * std_dev_combined), (mean_combined - lsl) / (3 * std_dev_combined))
-            st.write(f"Cp: {Cp:.2f}, Cpk: {Cpk:.2f}")
-            
             # General judgment of the problem
             st.write("### Theoretical Judgment:")
             total_boards = len(df.columns)
@@ -776,29 +465,12 @@ if action == "Check Assy Boards":
             else:
                 st.write(f"##### {no_good_percentage}% of the boards are NO GOOD. Therefore, the problem is probably with the assembly jigs.")
 
-            # # ANOVA Test
-            # st.write("### ANOVA Test to Determine Source of Variability:")
-            # data_for_anova = pd.melt(df.reset_index(), id_vars=['index'], value_vars=df.columns)
-            # data_for_anova.columns = ['index', 'Board', 'Measurement']
-            # model = ols('Measurement ~ C(Board)', data=data_for_anova).fit()
-            # anova_table = sm.stats.anova_lm(model, typ=2)
-            # st.write(anova_table)
-            
-            # p_value = anova_table['PR(>F)'][0]
-            # if p_value < 0.05:
-            #     st.write("There is a significant difference between boards, indicating that the issue may be due to the assembly jigs.")
-            # else:
-            #     st.write("There is no significant difference between boards, indicating that the issue may be due to the method.")
-        
         except UnicodeDecodeError as e:
             st.error(f"UnicodeDecodeError: {e}. Please ensure the file is a valid Excel file.")
         except Exception as e:
             st.error(f"An error occurred: {e}. Please ensure the file is a valid Excel file.")  
 
-  
-
-with open('StatAnalysis\style.css') as f:
+with open('DOE\StatAnalysis\style.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
-
