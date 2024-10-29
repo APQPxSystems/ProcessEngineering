@@ -40,7 +40,7 @@ with st.sidebar:
     st.write("""Assumes that the first occurrence of every unique Product name, Lot number, and Serial Number is PRIME
             while the succeeding occurrences are REASSY.""")
     st.write("""DISCLAIMER: Using method 1 may disregard the fact that two or more NG can be detected on first inspection,
-            thus including other defects on REASSY.""")
+            thus identifying other defects as REASSY.""")
     st.subheader("Method 2:")
     st.write("""Assumes that all NG of every unique Product number, Lot number, and Serial number detected on the same first date
             are PRIME while the NG of the same PN, LN, ad SN detected on other dates are REASSY.""")
