@@ -31,7 +31,7 @@ st.write("____________________________________________")
 # Sidebar
 with st.sidebar:
     st.header("How to Use:")
-    st.write("Upload raw data of internald defects.")
+    st.write("Upload raw data of internal defects.")
     st.write("Select the necessary columns as indicated on drop down menus.")
     st.write("Select a method.")
     
