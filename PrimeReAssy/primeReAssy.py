@@ -28,6 +28,24 @@ st.markdown("""
 st.title("Prime or Reassy Identifier")
 st.write("____________________________________________")
 
+# Sidebar
+with st.sidebar:
+    st.header("How to Use:")
+    st.write("Upload raw data of internald defects.")
+    st.write("Select the necessary columns as indicated on drop down menus.")
+    st.write("Select a method.")
+    
+    st.header("Method Selection Guide:")
+    st.subheader("Method 1:")
+    st.write("""Assumes that the first occurrence of every unique Product name, Lot number, and Serial Number is PRIME
+            while the succeeding occurrences are REASSY.""")
+    st.write("""DISCLAIMER: Using method 1 may disregard the fact that two or more NG can be detected on first inspection,
+            thus including other defects on REASSY.""")
+    st.subheader("Method 2:")
+    st.write("""Assumes that all NG of every unique Product number, Lot number, and Serial number detected on the same first date
+            are PRIME while the NG of the same PN, LN, ad SN detected on other dates are REASSY.""")
+    st.write("""DISCLAIMER: Using method 2 assumes that repair and reassy did not happen on the same day that the first NG was detected.""")
+
 # Upload defect details
 st.subheader("Raw Data Configurations")
 raw_data = st.file_uploader("Upload excel file of raw data of internal defects")
