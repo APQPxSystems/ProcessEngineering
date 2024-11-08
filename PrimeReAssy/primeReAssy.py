@@ -126,7 +126,7 @@ else:
     st.write("3. Click on the Process Data button.")
     st.write("4. Scroll down and click on the Download Processed Data button to download the processed Excel file.")
     st.subheader("Download sample Excel template:")
-    file_path = "Line 4126.xlsx"
+    file_path = "PrimeReAssy/template.xlsx"
     with open(file_path, "rb") as file:
         st.download_button(
             label="Download Excel Template",
