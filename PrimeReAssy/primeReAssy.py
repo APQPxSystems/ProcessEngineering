@@ -67,7 +67,8 @@ st.write("""This defect analysis tool uses the Reworking Issue Number data to id
         the Reworking Issue Number will be analyzed. The first occurrence of consecutive Reworking Issue Number/s will
         be identified as PRIME and the next occurrences will be REASSY. This would help us to identify the number of defects
         per inspection more accurately instead of relying to the defect detection date. The app can also identify 
-        the number of times that each harness undergo REASSY (labeled as Reassy1, Reassy2, Reassy3, and so on).
+        the number of times that each harness undergo REASSY (labeled as Reassy1, Reassy2, Reassy3, and so on) and the number of
+        NG everytime the harness is inspected.
         """)
 
 with st.sidebar:
