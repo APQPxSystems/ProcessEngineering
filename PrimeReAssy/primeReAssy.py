@@ -91,29 +91,29 @@ if password == "kent":
       issue_col = st.selectbox("Select the Reworking Issue Number column:", df.columns)
   
       if st.button("Process Data"):
-            # Process data to add Unique Identifier and Prime/Reassy columns
-            df = determine_status(df, product_col, lot_col, serial_col, issue_col)
+          # Process data to add Unique Identifier and Prime/Reassy columns
+          df = determine_status(df, product_col, lot_col, serial_col, issue_col)
 
-            # Display processed data
-            st.write("Processed Data with Prime/Reassy Status:")
-            st.dataframe(df)
+          # Display processed data
+          st.write("Processed Data with Prime/Reassy Status:")
+          st.dataframe(df)
 
-            # Create the pivot table and add a total count column
-            pivot_df = df.pivot_table(index='Unique Identifier', columns='Prime/Reassy', aggfunc='size', fill_value=0)
-            pivot_df['Total Count'] = pivot_df.sum(axis=1)
+          # Create the pivot table and add a total count column
+          pivot_df = df.pivot_table(index='Unique Identifier', columns='Prime/Reassy', aggfunc='size', fill_value=0)
+          pivot_df['Total Count'] = pivot_df.sum(axis=1)
 
-            # Rename columns to add "NG" to each Prime/Reassy label
-            pivot_df = pivot_df.rename(columns={col: f"{col} NG" for col in pivot_df.columns if col not in ['Total Count']})
+          # Rename columns to add "NG" to each Prime/Reassy label
+          pivot_df = pivot_df.rename(columns={col: f"{col} NG" for col in pivot_df.columns if col not in ['Total Count']})
 
-            # Add a new column for the number of repairs, counting non-zero values excluding 'Total Count'
-            pivot_df['Times Repaired'] = (pivot_df.loc[:, pivot_df.columns != 'Total Count'] > 0).sum(axis=1)
+          # Add a new column for the number of repairs, counting non-zero values excluding 'Total Count'
+          pivot_df['Times Repaired'] = (pivot_df.loc[:, pivot_df.columns != 'Total Count'] > 0).sum(axis=1)
 
-            # Sort pivot table by No. of Repair in descending order
-            pivot_df = pivot_df.sort_values(by='Times Repaired', ascending=False)
+          # Sort pivot table by No. of Repair in descending order
+          pivot_df = pivot_df.sort_values(by='Times Repaired', ascending=False)
 
-            # Display pivot table
-            st.write("Defect Distribution Analysis (Pivot Table):")
-            st.dataframe(pivot_df)
+          # Display pivot table
+          st.write("Defect Distribution Analysis (Pivot Table):")
+          st.dataframe(pivot_df)
           
           # Save both sheets to an Excel file for download
           with pd.ExcelWriter("processed_defect_data_with_pivot.xlsx") as writer:
