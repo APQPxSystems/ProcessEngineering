@@ -62,76 +62,78 @@ def determine_status(df, product_col, lot_col, serial_col, issue_col):
 
 # Streamlit app layout
 st.title("Defect Analysis AI: Prime and Reassy Identifier")
-st.write("""This defect analysis tool uses the Reworking Issue Number data to identfy the Prime and Reassy Harness.
-        For every unique Harness (identified by the combination of Product Number, Lot Number, and Serial Number),
-        the Reworking Issue Number will be analyzed. The first occurrence of consecutive Reworking Issue Number/s will
-        be identified as PRIME and the next occurrences will be REASSY. This would help us to identify the number of defects
-        per inspection more accurately instead of relying to the defect detection date. The app can also identify 
-        the number of times that each harness undergo REASSY (labeled as Reassy1, Reassy2, Reassy3, and so on) and the number of
-        NG everytime the harness is inspected.
-        """)
-
-with st.sidebar:
-    st.title("ProcessEngineering")
-    st.write("_________________________")
-    uploaded_file = st.file_uploader("Upload your defect data Excel file", type=["xlsx"])
-
-if uploaded_file:
-    # Load data
-    df = pd.read_excel(uploaded_file)
-    st.write("Uploaded Data:")
-    st.dataframe(df)
-    
-    # Column selection
-    product_col = st.selectbox("Select the Product Name column:", df.columns)
-    lot_col = st.selectbox("Select the Lot Number column:", df.columns)
-    serial_col = st.selectbox("Select the Serial Number column:", df.columns)
-    issue_col = st.selectbox("Select the Reworking Issue Number column:", df.columns)
-
-    if st.button("Process Data"):
-        # Process data to add Unique Identifier and Prime/Reassy columns
-        df = determine_status(df, product_col, lot_col, serial_col, issue_col)
-        
-        # Display processed data
-        st.write("Processed Data with Prime/Reassy Status:")
-        st.dataframe(df)
-        
-        # Create the pivot table and add a total count column
-        pivot_df = df.pivot_table(index='Unique Identifier', columns='Prime/Reassy', aggfunc='size', fill_value=0)
-        pivot_df['Total Count'] = pivot_df.sum(axis=1)
-        
-        # Sort pivot table by Total Count in descending order
-        pivot_df = pivot_df.sort_values(by='Total Count', ascending=False)
-        
-        # Display pivot table
-        st.write("Defect Distribution Analysis (Pivot Table):")
-        st.dataframe(pivot_df)
-        
-        # Save both sheets to an Excel file for download
-        with pd.ExcelWriter("processed_defect_data_with_pivot.xlsx") as writer:
-            df.to_excel(writer, sheet_name="Processed Data", index=False)
-            pivot_df.to_excel(writer, sheet_name="Defect Distribution Analysis")
-        
-        # Option to download the modified data and pivot table as an Excel file
-        with open("processed_defect_data_with_pivot.xlsx", "rb") as file:
-            st.download_button(
-                label="Download Processed Data",
-                data=file,
-                file_name="processed_defect_data.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-else:
-    st.subheader("How to use:")
-    st.write("1. Drag and drop the details of defect Excel file on the sidebar.")
-    st.write("2. Select the columns for Product Name, Lot Number, Serial Number, and Reworking Issue Number.")
-    st.write("3. Click on the Process Data button.")
-    st.write("4. Scroll down and click on the Download Processed Data button to download the processed Excel file.")
-    st.subheader("Download sample Excel template:")
-    file_path = "PrimeReAssy/template.xlsx"
-    with open(file_path, "rb") as file:
-        st.download_button(
-            label="Download Excel Template",
-            data=file,
-            file_name="template.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+password = st.text_input("Input app key to continue:")
+if password == "kent":
+  st.write("""This defect analysis tool uses the Reworking Issue Number data to identfy the Prime and Reassy Harness.
+          For every unique Harness (identified by the combination of Product Number, Lot Number, and Serial Number),
+          the Reworking Issue Number will be analyzed. The first occurrence of consecutive Reworking Issue Number/s will
+          be identified as PRIME and the next occurrences will be REASSY. This would help us to identify the number of defects
+          per inspection more accurately instead of relying to the defect detection date. The app can also identify 
+          the number of times that each harness undergo REASSY (labeled as Reassy1, Reassy2, Reassy3, and so on) and the number of
+          NG everytime the harness is inspected.
+          """)
+  
+  with st.sidebar:
+      st.title("ProcessEngineering")
+      st.write("_________________________")
+      uploaded_file = st.file_uploader("Upload your defect data Excel file", type=["xlsx"])
+  
+  if uploaded_file:
+      # Load data
+      df = pd.read_excel(uploaded_file)
+      st.write("Uploaded Data:")
+      st.dataframe(df)
+      
+      # Column selection
+      product_col = st.selectbox("Select the Product Name column:", df.columns)
+      lot_col = st.selectbox("Select the Lot Number column:", df.columns)
+      serial_col = st.selectbox("Select the Serial Number column:", df.columns)
+      issue_col = st.selectbox("Select the Reworking Issue Number column:", df.columns)
+  
+      if st.button("Process Data"):
+          # Process data to add Unique Identifier and Prime/Reassy columns
+          df = determine_status(df, product_col, lot_col, serial_col, issue_col)
+          
+          # Display processed data
+          st.write("Processed Data with Prime/Reassy Status:")
+          st.dataframe(df)
+          
+          # Create the pivot table and add a total count column
+          pivot_df = df.pivot_table(index='Unique Identifier', columns='Prime/Reassy', aggfunc='size', fill_value=0)
+          pivot_df['Total Count'] = pivot_df.sum(axis=1)
+          
+          # Sort pivot table by Total Count in descending order
+          pivot_df = pivot_df.sort_values(by='Total Count', ascending=False)
+          
+          # Display pivot table
+          st.write("Defect Distribution Analysis (Pivot Table):")
+          st.dataframe(pivot_df)
+          
+          # Save both sheets to an Excel file for download
+          with pd.ExcelWriter("processed_defect_data_with_pivot.xlsx") as writer:
+              df.to_excel(writer, sheet_name="Processed Data", index=False)
+              pivot_df.to_excel(writer, sheet_name="Defect Distribution Analysis")
+          
+          # Option to download the modified data and pivot table as an Excel file
+          with open("processed_defect_data_with_pivot.xlsx", "rb") as file:
+              st.download_button(
+                  label="Download Processed Data",
+                  data=file,
+                  file_name="processed_defect_data.xlsx",
+                  mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              )
+  else:
+      st.subheader("How to use:")
+      st.write("1. Drag and drop the details of defect Excel file on the sidebar.")
+      st.write("2. Select the columns for Product Name, Lot Number, Serial Number, and Reworking Issue Number.")
+      st.write("3. Click on the Process Data button.")
+      st.write("4. Scroll down and click on the Download Processed Data button to download the processed Excel file.")
+      st.subheader("Download sample Excel template:")
+      file_path = "PrimeReAssy/template.xlsx"
+      with open(file_path, "rb") as file:
+          st.download_button(
+              label="Download Excel Template",
+              data=file,
+              file_name="template.xlsx",
+              mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          )
