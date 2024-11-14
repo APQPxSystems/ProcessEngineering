@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+from scipy.stats import chi2_contingency
 import seaborn as sns
 
 # Streamlit Configurations
@@ -52,7 +53,7 @@ st.write("""#### This statistical analysis tool is specialized for the analysis 
 st.write("__________________________________________")
 
 # Action Selection
-action = st.selectbox("What do you want to do:", ["Perform a statistical test", "Visualize data", "Check Assy Boards", "ME Initial Data Analysis"])
+action = st.selectbox("What do you want to do:", ["Perform a statistical test", "Visualize data", "Check Assy Boards", "Evaluate Countermeasure Effectiveness", "ME Initial Data Analysis"])
 
 # Perform Statistical Test
 if action == "Perform a statistical test":
@@ -65,7 +66,7 @@ if action == "Perform a statistical test":
         st.dataframe(raw_data)
         st.write("_________________________________________________")
     
-        test = st.selectbox("Select a statistical test:", ["One Sample t Test", "Two Sample t Test", "Paired t Test", "ANOVA", "Chi Square"])
+        test = st.selectbox("Select a statistical test:", ["One Sample t Test", "Two Sample t Test", "Paired t Test", "ANOVA"])
         
         # One Sample t Test
         if test == "One Sample t Test":
@@ -246,11 +247,7 @@ if action == "Perform a statistical test":
                     st.write("#### Decision: Reject the null hypothesis (At least one sample mean is significantly different from the others at α = 0.05).")
                 else:
                     st.write("#### Decision: Fail to reject the null hypothesis (No significant difference between the sample means at α = 0.05).")
-        
-        # Chi Square Test
-        if test == "Chi Square":
-            pass
-        
+
     else:
         st.write("#### No dataset has been uploaded.")
 
@@ -753,7 +750,63 @@ if action == "Check Assy Boards":
     else:
         st.write("#### No dataset has been uploaded.")
         
-        
+# Evaluate Countermeasure Effectiveness
+if action == "Evaluate Countermeasure Effectiveness":
+    def main():
+        st.title("Chi-Square Test for Independence")
+        st.header("Countermeasure Effectiveness Evaluation")
+        st.write("_______________________________________")
+        st.subheader("Enter Counts for Each Category")
+
+        # Input values for Before and After periods
+        before_data, after_data = st.columns([1,1])
+        with before_data:
+            before_defective = st.number_input("Before Counremeasure - Defective Count", min_value=0, value=10)
+            after_defective = st.number_input("After Countermeasure - Defective Count", min_value=0, value=2)
+        with after_data:
+            before_non_defective = st.number_input("Before Countermeasure - Non-Defective Count", min_value=0, value=90)
+            after_non_defective = st.number_input("After Countermeasure - Non-Defective Count", min_value=0, value=98)
+
+        # Step 1: Create DataFrame based on user input
+        data = {
+            "Period": ["Before", "Before", "After", "After"],
+            "Defect_Status": ["Defective", "Non-Defective", "Defective", "Non-Defective"],
+            "Count": [before_defective, before_non_defective, after_defective, after_non_defective]
+        }
+        df = pd.DataFrame(data)
+
+        # Step 2: Generate contingency table
+        contingency_table = pd.pivot_table(df, values="Count", index="Period", columns="Defect_Status")
+
+        # Display the contingency table
+        st.write("### Contingency Table")
+        st.write(contingency_table)
+
+        # Step 3: Perform Chi-Square Test
+        chi2, p_value, dof, expected = chi2_contingency(contingency_table)
+
+        # Step 4: Display Results
+        st.write("### Chi-Square Test Results")
+        st.write(f"Chi-Square Statistic: {chi2:.2f}")
+        st.write(f"p-value: {p_value:.4f}")
+        st.write(f"Degrees of Freedom: {dof}")
+
+        # Step 5: Display Expected Frequencies
+        st.write("### Expected Frequencies")
+        expected_df = pd.DataFrame(expected, index=contingency_table.index, columns=contingency_table.columns)
+        st.write(expected_df)
+
+        # Step 6: Interpretation
+        st.subheader("Interpretation:")
+        if p_value < 0.05:
+            st.subheader("The p-value is less than 0.05, indicating a significant effect. The countermeasure likely reduced the defects.")
+        else:
+            st.subheader("The p-value is not less than 0.05, indicating no significant effect. The countermeasure did not significantly reduce the defects.")
+
+    if __name__ == "__main__":
+        main()
+
+# ME Initial Data Analysis        
 if action == "ME Initial Data Analysis":
     # File Uploader
     raw_data = st.file_uploader("Please upload the Excel file of your dataset", type=["xlsx", "xls"])
@@ -953,7 +1006,7 @@ if action == "ME Initial Data Analysis":
         st.write("#### No dataset has been uploaded.")
     
     
-with open('StatsAnalysis/style.css') as f:
+with open('style.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
