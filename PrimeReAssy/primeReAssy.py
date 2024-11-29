@@ -63,7 +63,7 @@ def determine_status(df, product_col, lot_col, serial_col, issue_col):
 # Streamlit app layout
 st.title("Defect Analysis AI: Prime and Reassy Identifier")
 password = st.text_input("Input app key to continue:")
-if password == "kent":
+if password == "kent" or "gian:
   st.write("""This defect analysis tool uses the Reworking Issue Number data to identfy the Prime and Reassy Harness.
           For every unique Harness (identified by the combination of Product Number, Lot Number, and Serial Number),
           the Reworking Issue Number will be analyzed. The first occurrence of consecutive Reworking Issue Number/s will
