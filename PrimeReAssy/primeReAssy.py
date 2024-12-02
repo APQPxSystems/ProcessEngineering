@@ -38,35 +38,29 @@ def determine_status(df, product_col, lot_col, serial_col, issue_col):
         product_rows = df[df['Unique Identifier'] == uid]
         prev_issue_number = None
         reassy_count = 0  # Counter for Reassy labels
-        is_prime = True   # First set of issues will be Prime
+        issue_to_reassy_map = {}  # To map each issue number to its corresponding Reassy count
         
-        # Dictionary to track Reassy counts for each unique issue number
-        issue_to_reassy_map = {}
-
         for idx, row in product_rows.iterrows():
             current_issue_number = row[issue_col]
             
-            # Check if the current issue number is in the map
-            if current_issue_number in issue_to_reassy_map:
-                # If it exists, use the same Reassy number as previous
-                df.at[idx, 'Prime/Reassy'] = f'Reassy{issue_to_reassy_map[current_issue_number]}'
-            else:
-                # If it does not exist in the map, decide whether it's Prime or Reassy
-                if prev_issue_number is None or current_issue_number == prev_issue_number + 1:
-                    # First occurrence of an issue number, mark as Prime
-                    if is_prime:
-                        df.at[idx, 'Prime/Reassy'] = 'Prime'
-                        issue_to_reassy_map[current_issue_number] = reassy_count  # Add to map with count
-                    else:
-                        # If it's not the first, it's the next Reassy
-                        df.at[idx, 'Prime/Reassy'] = f'Reassy{reassy_count}'
+            if prev_issue_number is None or current_issue_number != prev_issue_number:
+                # If this is the first issue number for this product, label it as 'Prime'
+                if prev_issue_number is None:
+                    df.at[idx, 'Prime/Reassy'] = 'Prime'
+                    issue_to_reassy_map[current_issue_number] = 1  # First issue is Prime
                 else:
-                    # If it's non-consecutive, increment Reassy count
-                    reassy_count += 1
-                    df.at[idx, 'Prime/Reassy'] = f'Reassy{reassy_count}'
-                    issue_to_reassy_map[current_issue_number] = reassy_count  # Add to map with new count
-                    is_prime = False  # Subsequent sets are all Reassy
-
+                    # For a new issue number, assign Reassy counter
+                    if current_issue_number not in issue_to_reassy_map:
+                        reassy_count += 1
+                        df.at[idx, 'Prime/Reassy'] = f'Reassy{reassy_count}'
+                        issue_to_reassy_map[current_issue_number] = reassy_count
+                    else:
+                        # Reuse the same Reassy number for repeated issues
+                        df.at[idx, 'Prime/Reassy'] = f'Reassy{issue_to_reassy_map[current_issue_number]}'
+            else:
+                # If the issue number is the same as the previous, it continues with the same Reassy number
+                df.at[idx, 'Prime/Reassy'] = f'Reassy{issue_to_reassy_map[current_issue_number]}'
+            
             prev_issue_number = current_issue_number
     
     return df
