@@ -64,23 +64,29 @@ def determine_status(df, product_col, lot_col, serial_col, issue_col):
 st.title("Defect Analysis AI: Prime and Reassy Identifier")
 password = st.text_input("Input app key to continue:")
 if password == "kent" or password == "gian" or password == "tato":
-  st.write("""This defect analysis tool uses the Reworking Issue Number data to identfy the Prime and Reassy Harness.
+  st.write("""This defect analysis tool uses the Reworking Issue Number data to identify the Prime and Reassy Harness.
           For every unique Harness (identified by the combination of Product Number, Lot Number, and Serial Number),
           the Reworking Issue Number will be analyzed. The first occurrence of consecutive Reworking Issue Number/s will
-          be identified as PRIME and the next occurrences will be REASSY. This would help us to identify the number of defects
-          per inspection more accurately instead of relying to the defect detection date. The app can also identify 
-          the number of times that each harness undergo REASSY (labeled as Reassy1, Reassy2, Reassy3, and so on) and the number of
-          NG everytime the harness is inspected.
+          be identified as PRIME and the next occurrences will be REASSY. This helps to identify the number of defects
+          per inspection more accurately instead of relying on the defect detection date. The app can also identify 
+          the number of times that each harness undergoes REASSY (labeled as Reassy1, Reassy2, Reassy3, and so on) and the number of
+          NG every time the harness is inspected.
           """)
   
   with st.sidebar:
       st.title("ProcessEngineering")
       st.write("_________________________")
-      uploaded_file = st.file_uploader("Upload your defect data Excel file", type=["xlsx", "csv"])
+      uploaded_file = st.file_uploader("Upload your defect data Excel/CSV file", type=["xlsx", "csv"])
   
   if uploaded_file:
-      # Load data
-      df = pd.read_excel(uploaded_file)
+      # Check the file type
+      if uploaded_file.name.endswith(".xlsx"):
+          # Load Excel file
+          df = pd.read_excel(uploaded_file)
+      elif uploaded_file.name.endswith(".csv"):
+          # Load CSV file
+          df = pd.read_csv(uploaded_file)
+
       st.write("Uploaded Data:")
       st.dataframe(df)
       
@@ -130,7 +136,7 @@ if password == "kent" or password == "gian" or password == "tato":
               )
   else:
       st.subheader("How to use:")
-      st.write("1. Drag and drop the details of defect Excel file on the sidebar.")
+      st.write("1. Drag and drop the details of defect Excel or CSV file on the sidebar.")
       st.write("2. Select the columns for Product Name, Lot Number, Serial Number, and Reworking Issue Number.")
       st.write("3. Click on the Process Data button.")
       st.write("4. Scroll down and click on the Download Processed Data button to download the processed Excel file.")
