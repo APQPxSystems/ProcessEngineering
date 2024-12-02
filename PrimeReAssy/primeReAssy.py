@@ -53,11 +53,12 @@ def determine_status(df, product_col, lot_col, serial_col, issue_col):
             else:
                 # If it does not exist in the map, decide whether it's Prime or Reassy
                 if prev_issue_number is None or current_issue_number == prev_issue_number + 1:
-                    # If it's the first occurrence or consecutive, label as Prime or first Reassy
+                    # First occurrence of an issue number, mark as Prime
                     if is_prime:
                         df.at[idx, 'Prime/Reassy'] = 'Prime'
                         issue_to_reassy_map[current_issue_number] = reassy_count  # Add to map with count
                     else:
+                        # If it's not the first, it's the next Reassy
                         df.at[idx, 'Prime/Reassy'] = f'Reassy{reassy_count}'
                 else:
                     # If it's non-consecutive, increment Reassy count
@@ -159,4 +160,3 @@ if password == "kent" or password == "gian" or password == "tato":
                 file_name="template.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
-
