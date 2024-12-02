@@ -13,7 +13,7 @@ hide_st_style = """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 # Remove top white space
-st.markdown("""
+st.markdown(""" 
         <style>
             .block-container {
                     padding-top: 0rem;
@@ -40,21 +40,31 @@ def determine_status(df, product_col, lot_col, serial_col, issue_col):
         reassy_count = 0  # Counter for Reassy labels
         is_prime = True   # First set of issues will be Prime
         
+        # Dictionary to track Reassy counts for each unique issue number
+        issue_to_reassy_map = {}
+
         for idx, row in product_rows.iterrows():
             current_issue_number = row[issue_col]
             
-            # Check if the current issue number is consecutive from the previous
-            if prev_issue_number is None or current_issue_number == prev_issue_number + 1:
-                # If this is the first set, mark as Prime; otherwise, mark as current Reassy
-                if is_prime:
-                    df.at[idx, 'Prime/Reassy'] = 'Prime'
-                else:
-                    df.at[idx, 'Prime/Reassy'] = f'Reassy{reassy_count}'
+            # Check if the current issue number is in the map
+            if current_issue_number in issue_to_reassy_map:
+                # If it exists, use the same Reassy number as previous
+                df.at[idx, 'Prime/Reassy'] = f'Reassy{issue_to_reassy_map[current_issue_number]}'
             else:
-                # If non-consecutive, start a new Reassy label
-                reassy_count += 1
-                df.at[idx, 'Prime/Reassy'] = f'Reassy{reassy_count}'
-                is_prime = False  # Subsequent sets are all Reassy
+                # If it does not exist in the map, decide whether it's Prime or Reassy
+                if prev_issue_number is None or current_issue_number == prev_issue_number + 1:
+                    # If it's the first occurrence or consecutive, label as Prime or first Reassy
+                    if is_prime:
+                        df.at[idx, 'Prime/Reassy'] = 'Prime'
+                        issue_to_reassy_map[current_issue_number] = reassy_count  # Add to map with count
+                    else:
+                        df.at[idx, 'Prime/Reassy'] = f'Reassy{reassy_count}'
+                else:
+                    # If it's non-consecutive, increment Reassy count
+                    reassy_count += 1
+                    df.at[idx, 'Prime/Reassy'] = f'Reassy{reassy_count}'
+                    issue_to_reassy_map[current_issue_number] = reassy_count  # Add to map with new count
+                    is_prime = False  # Subsequent sets are all Reassy
 
             prev_issue_number = current_issue_number
     
@@ -64,7 +74,7 @@ def determine_status(df, product_col, lot_col, serial_col, issue_col):
 st.title("Defect Analysis AI: Prime and Reassy Identifier")
 password = st.text_input("Input app key to continue:")
 if password == "kent" or password == "gian" or password == "tato":
-  st.write("""This defect analysis tool uses the Reworking Issue Number data to identify the Prime and Reassy Harness.
+    st.write("""This defect analysis tool uses the Reworking Issue Number data to identify the Prime and Reassy Harness.
           For every unique Harness (identified by the combination of Product Number, Lot Number, and Serial Number),
           the Reworking Issue Number will be analyzed. The first occurrence of consecutive Reworking Issue Number/s will
           be identified as PRIME and the next occurrences will be REASSY. This helps to identify the number of defects
@@ -73,79 +83,80 @@ if password == "kent" or password == "gian" or password == "tato":
           NG every time the harness is inspected.
           """)
   
-  with st.sidebar:
-      st.title("ProcessEngineering")
-      st.write("_________________________")
-      uploaded_file = st.file_uploader("Upload your defect data Excel/CSV file", type=["xlsx", "csv"])
+    with st.sidebar:
+        st.title("ProcessEngineering")
+        st.write("_________________________")
+        uploaded_file = st.file_uploader("Upload your defect data Excel/CSV file", type=["xlsx", "csv"])
   
-  if uploaded_file:
-      # Check the file type
-      if uploaded_file.name.endswith(".xlsx"):
-          # Load Excel file
-          df = pd.read_excel(uploaded_file)
-      elif uploaded_file.name.endswith(".csv"):
-          # Load CSV file
-          df = pd.read_csv(uploaded_file)
+    if uploaded_file:
+        # Check the file type
+        if uploaded_file.name.endswith(".xlsx"):
+            # Load Excel file
+            df = pd.read_excel(uploaded_file)
+        elif uploaded_file.name.endswith(".csv"):
+            # Load CSV file
+            df = pd.read_csv(uploaded_file)
 
-      st.write("Uploaded Data:")
-      st.dataframe(df)
+        st.write("Uploaded Data:")
+        st.dataframe(df)
       
-      # Column selection
-      product_col = st.selectbox("Select the Product Name column:", df.columns)
-      lot_col = st.selectbox("Select the Lot Number column:", df.columns)
-      serial_col = st.selectbox("Select the Serial Number column:", df.columns)
-      issue_col = st.selectbox("Select the Reworking Issue Number column:", df.columns)
+        # Column selection
+        product_col = st.selectbox("Select the Product Name column:", df.columns)
+        lot_col = st.selectbox("Select the Lot Number column:", df.columns)
+        serial_col = st.selectbox("Select the Serial Number column:", df.columns)
+        issue_col = st.selectbox("Select the Reworking Issue Number column:", df.columns)
   
-      if st.button("Process Data"):
-          # Process data to add Unique Identifier and Prime/Reassy columns
-          df = determine_status(df, product_col, lot_col, serial_col, issue_col)
+        if st.button("Process Data"):
+            # Process data to add Unique Identifier and Prime/Reassy columns
+            df = determine_status(df, product_col, lot_col, serial_col, issue_col)
 
-          # Display processed data
-          st.write("Processed Data with Prime/Reassy Status:")
-          st.dataframe(df)
+            # Display processed data
+            st.write("Processed Data with Prime/Reassy Status:")
+            st.dataframe(df)
 
-          # Create the pivot table and add a total count column
-          pivot_df = df.pivot_table(index='Unique Identifier', columns='Prime/Reassy', aggfunc='size', fill_value=0)
-          pivot_df['Total Count'] = pivot_df.sum(axis=1)
+            # Create the pivot table and add a total count column
+            pivot_df = df.pivot_table(index='Unique Identifier', columns='Prime/Reassy', aggfunc='size', fill_value=0)
+            pivot_df['Total Count'] = pivot_df.sum(axis=1)
 
-          # Rename columns to add "NG" to each Prime/Reassy label
-          pivot_df = pivot_df.rename(columns={col: f"{col} NG" for col in pivot_df.columns if col not in ['Total Count']})
+            # Rename columns to add "NG" to each Prime/Reassy label
+            pivot_df = pivot_df.rename(columns={col: f"{col} NG" for col in pivot_df.columns if col not in ['Total Count']})
 
-          # Add a new column for the number of repairs, counting non-zero values excluding 'Total Count'
-          pivot_df['Times Repaired'] = (pivot_df.loc[:, pivot_df.columns != 'Total Count'] > 0).sum(axis=1)
+            # Add a new column for the number of repairs, counting non-zero values excluding 'Total Count'
+            pivot_df['Times Repaired'] = (pivot_df.loc[:, pivot_df.columns != 'Total Count'] > 0).sum(axis=1)
 
-          # Sort pivot table by No. of Repair in descending order
-          pivot_df = pivot_df.sort_values(by='Times Repaired', ascending=False)
+            # Sort pivot table by No. of Repair in descending order
+            pivot_df = pivot_df.sort_values(by='Times Repaired', ascending=False)
 
-          # Display pivot table
-          st.write("Defect Distribution Analysis (Pivot Table):")
-          st.dataframe(pivot_df)
+            # Display pivot table
+            st.write("Defect Distribution Analysis (Pivot Table):")
+            st.dataframe(pivot_df)
           
-          # Save both sheets to an Excel file for download
-          with pd.ExcelWriter("processed_defect_data_with_pivot.xlsx") as writer:
-              df.to_excel(writer, sheet_name="Processed Data", index=False)
-              pivot_df.to_excel(writer, sheet_name="Defect Distribution Analysis")
+            # Save both sheets to an Excel file for download
+            with pd.ExcelWriter("processed_defect_data_with_pivot.xlsx") as writer:
+                df.to_excel(writer, sheet_name="Processed Data", index=False)
+                pivot_df.to_excel(writer, sheet_name="Defect Distribution Analysis")
           
-          # Option to download the modified data and pivot table as an Excel file
-          with open("processed_defect_data_with_pivot.xlsx", "rb") as file:
-              st.download_button(
-                  label="Download Processed Data",
-                  data=file,
-                  file_name="processed_defect_data.xlsx",
-                  mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              )
-  else:
-      st.subheader("How to use:")
-      st.write("1. Drag and drop the details of defect Excel or CSV file on the sidebar.")
-      st.write("2. Select the columns for Product Name, Lot Number, Serial Number, and Reworking Issue Number.")
-      st.write("3. Click on the Process Data button.")
-      st.write("4. Scroll down and click on the Download Processed Data button to download the processed Excel file.")
-      st.subheader("Download sample Excel template:")
-      file_path = "PrimeReAssy/template.xlsx"
-      with open(file_path, "rb") as file:
-          st.download_button(
-              label="Download Excel Template",
-              data=file,
-              file_name="template.xlsx",
-              mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          )
+            # Option to download the modified data and pivot table as an Excel file
+            with open("processed_defect_data_with_pivot.xlsx", "rb") as file:
+                st.download_button(
+                    label="Download Processed Data",
+                    data=file,
+                    file_name="processed_defect_data.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+    else:
+        st.subheader("How to use:")
+        st.write("1. Drag and drop the details of defect Excel or CSV file on the sidebar.")
+        st.write("2. Select the columns for Product Name, Lot Number, Serial Number, and Reworking Issue Number.")
+        st.write("3. Click on the Process Data button.")
+        st.write("4. Scroll down and click on the Download Processed Data button to download the processed Excel file.")
+        st.subheader("Download sample Excel template:")
+        file_path = "PrimeReAssy/template.xlsx"
+        with open(file_path, "rb") as file:
+            st.download_button(
+                label="Download Excel Template",
+                data=file,
+                file_name="template.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+
