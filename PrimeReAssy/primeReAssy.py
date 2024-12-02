@@ -76,7 +76,7 @@ if password == "kent" or password == "gian" or password == "tato":
   with st.sidebar:
       st.title("ProcessEngineering")
       st.write("_________________________")
-      uploaded_file = st.file_uploader("Upload your defect data Excel file", type=["xlsx"])
+      uploaded_file = st.file_uploader("Upload your defect data Excel file", type=["xlsx", "csv"])
   
   if uploaded_file:
       # Load data
