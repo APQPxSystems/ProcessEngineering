@@ -1006,7 +1006,7 @@ if action == "ME Initial Data Analysis":
         st.write("#### No dataset has been uploaded.")
     
     
-with open('StatsAnalysis/style.css') as f:
+with open('StatsAnalysis/style1.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
