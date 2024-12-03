@@ -3,6 +3,8 @@ import pandas as pd
 
 # Streamlit Configurations
 st.set_page_config(page_title="PRIME/REASSY Identifier | KentK.", layout="wide")
+
+# Hide Streamlit elements like the menu and footer
 hide_st_style = """
                 <style>
                 #MainMenu {visibility:hidden;}
@@ -68,7 +70,7 @@ def determine_status(df, product_col, lot_col, serial_col, issue_col):
 # Streamlit app layout
 st.title("Defect Analysis AI: Prime and Reassy Identifier")
 password = st.text_input("Input app key to continue:")
-if password == "kent" or password == "gian" or password == "tato":
+if password in ["kent", "gian", "tato"]:
     st.write("""This defect analysis tool uses the Reworking Issue Number data to identify the Prime and Reassy Harness.
           For every unique Harness (identified by the combination of Product Number, Lot Number, and Serial Number),
           the Reworking Issue Number will be analyzed. The first occurrence of consecutive Reworking Issue Number/s will
