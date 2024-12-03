@@ -147,7 +147,7 @@ if password == "kent" or password == "gian" or password == "tato":
         st.write("4. Scroll down and click on the Download Processed Data button to download the processed Excel file.")
         st.subheader("Download sample Excel template:")
         file_path = "PrimeReAssy/template.xlsx"
-        with open(file_path, "rb") as file:
+        with open(file_path1, "rb") as file:
             st.download_button(
                 label="Download Excel Template",
                 data=file,
