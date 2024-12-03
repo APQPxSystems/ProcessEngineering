@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st1
 import pandas as pd
 
 # Streamlit Configurations
