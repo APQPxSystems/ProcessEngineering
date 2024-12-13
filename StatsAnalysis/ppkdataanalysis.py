@@ -67,7 +67,7 @@ if uploaded_file:
                 # Show plot
                 st.pyplot(fig)
 
-with open('style.css') as f:
+with open('StatsAnalysis/style.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
