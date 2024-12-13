@@ -24,7 +24,7 @@ if uploaded_file:
     raw_data = excel_data.parse(sheet_name)
 
     # Visualization selection
-    visualization = st.selectbox("Select visualization", ["Normal Curve with Histogram"])
+    visualization = "Normal Curve with Histogram"
 
     # If the user selects 'Normal Curve with Histogram'
     if visualization == "Normal Curve with Histogram":
