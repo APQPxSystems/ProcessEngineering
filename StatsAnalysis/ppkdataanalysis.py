@@ -57,10 +57,10 @@ if uploaded_file:
                 ax.plot(x, p, 'k', linewidth=2, label='Normal Curve')
 
                 # Plot vertical lines for mean (green), USL, LSL (red), +/- 3 sigma (blue), and median line (orange)
-                ax.axvline(mu, color='green', linestyle='--', label='Mean')  # Mean in green
+                ax.axvline(mu, color='orange', linestyle='--', label='Mean')  # Mean in green
                 ax.axvline(usl, color='red', linestyle='--', label='USL')    # USL in red
                 ax.axvline(lsl, color='red', linestyle='--', label='LSL')    # LSL in red
-                ax.axvline(median_line, color='orange', linestyle='-', label='Median Line (Avg of USL & LSL)')  # Median Line in orange
+                ax.axvline(median_line, color='green', linestyle='-', label='Median Line (Avg of USL & LSL)')  # Median Line in orange
                 ax.axvline(mu + 3*sigma, color='blue', linestyle=':', label='+3 Sigma')  # +3 Sigma in blue
                 ax.axvline(mu - 3*sigma, color='blue', linestyle=':', label='-3 Sigma')  # -3 Sigma in blue
 
@@ -70,27 +70,6 @@ if uploaded_file:
 
                 # Show plot
                 st.pyplot(fig)
-
-                # Analysis for the description
-                bias = ((mu - median_line) / (usl - lsl)) * 100
-                within_tolerance = (mu - 3 * sigma >= lsl) and (mu + 3 * sigma <= usl)
-                lower_outside = mu - 3 * sigma < lsl
-                upper_outside = mu + 3 * sigma > usl
-
-                # Generate the detailed description
-                description = f"""
-                - Mean is biased {'high' if bias > 0 else 'low'} by {abs(bias):.2f}% relative to the tolerance range.
-                - The +/- 3 sigma range is {'inside' if within_tolerance else 'outside'} the tolerance range.
-                """
-                if not within_tolerance:
-                    if lower_outside:
-                        description += "- The lower 3 sigma limit is outside the tolerance range.\n"
-                    if upper_outside:
-                        description += "- The upper 3 sigma limit is outside the tolerance range.\n"
-
-                # Display the detailed description
-                st.write(f"### Analysis for {column}")
-                st.write(description)
 
 # Apply custom CSS (optional)
 with open('StatsAnalysis/style.css') as f:
