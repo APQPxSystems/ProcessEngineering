@@ -34,6 +34,9 @@ if uploaded_file:
 
         st.write("Normal Curve with Histogram:")
 
+        # Calculate the median line as the average of USL and LSL
+        median_line = (usl + lsl) / 2
+
         # Loop through columns of the selected sheet (data)
         for column in raw_data.columns:
             # Only consider numeric columns for histograms
@@ -53,10 +56,11 @@ if uploaded_file:
                 # Plot the normal curve
                 ax.plot(x, p, 'k', linewidth=2, label='Normal Curve')
 
-                # Plot vertical lines for mean (green), USL, LSL (red), and +/- 3 sigma (blue)
-                ax.axvline(mu, color='green', linestyle='--', label='Mean')  # Mean in green
+                # Plot vertical lines for mean (green), USL, LSL (red), +/- 3 sigma (blue), and median line (orange)
+                # ax.axvline(mu, color='orange', linestyle='--', label='Mean')  # Mean in green
                 ax.axvline(usl, color='red', linestyle='--', label='USL')    # USL in red
                 ax.axvline(lsl, color='red', linestyle='--', label='LSL')    # LSL in red
+                ax.axvline(median_line, color='green', linestyle='-', label='Median Line (Avg of USL & LSL)')  # Median Line in orange
                 ax.axvline(mu + 3*sigma, color='blue', linestyle=':', label='+3 Sigma')  # +3 Sigma in blue
                 ax.axvline(mu - 3*sigma, color='blue', linestyle=':', label='-3 Sigma')  # -3 Sigma in blue
 
@@ -67,6 +71,7 @@ if uploaded_file:
                 # Show plot
                 st.pyplot(fig)
 
+# Apply custom CSS (optional)
 with open('StatsAnalysis/style.css') as f:
     css = f.read()
 
