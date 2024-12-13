@@ -57,7 +57,7 @@ if uploaded_file:
                 ax.plot(x, p, 'k', linewidth=2, label='Normal Curve')
 
                 # Plot vertical lines for mean (green), USL, LSL (red), +/- 3 sigma (blue), and median line (orange)
-                # ax.axvline(mu, color='orange', linestyle='--', label='Mean')  # Mean in green
+                ax.axvline(mu, color='orange', linestyle='--', label='Mean of PPK Data')  # Mean in green
                 ax.axvline(usl, color='red', linestyle='--', label='USL')    # USL in red
                 ax.axvline(lsl, color='red', linestyle='--', label='LSL')    # LSL in red
                 ax.axvline(median_line, color='green', linestyle='-', label='Median Line (Avg of USL & LSL)')  # Median Line in orange
