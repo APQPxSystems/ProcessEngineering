@@ -5,7 +5,7 @@ import numpy as np
 from scipy import stats
 
 # Streamlit app title
-st.title("Excel Data Analysis - Normal Curve with Histogram")
+st.title("PPK Data Analysis")
 
 # File upload widget
 uploaded_file = st.file_uploader("Upload an Excel file", type=["xlsx"])
