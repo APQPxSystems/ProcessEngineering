@@ -32,7 +32,7 @@ if uploaded_file:
         lsl = st.number_input("Specify Lower Specification Limit (LSL)", min_value=1)
         bins = st.number_input("Specify number of histogram bins", min_value=1)
 
-        st.write("Histograms with Normal Curve, Mean, USL, LSL, and +/- 3 Sigma:")
+        st.write("Normal Curve with Histogram:")
 
         # Loop through columns of the selected sheet (data)
         for column in raw_data.columns:
