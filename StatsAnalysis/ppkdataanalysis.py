@@ -4,6 +4,29 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 
+# Streamlit Configurations
+st.set_page_config(page_title="PPKdataAnalysis | KentK.")
+hide_st_style = """
+                <style>
+                #MainMenu {visibility:hidden;}
+                footer {visibility:hidden;}
+                header {visibility:hidden;}
+                </style>
+                """
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
+# Remove top white space
+st.markdown("""
+        <style>
+            .block-container {
+                    padding-top: 0rem;
+                    padding-bottom: 0rem;
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                }
+        </style>
+        """, unsafe_allow_html=True)
+
 # Streamlit app title
 st.title("PPK Data Analysis")
 
@@ -72,7 +95,7 @@ if uploaded_file:
                 st.pyplot(fig)
 
 # Apply custom CSS (optional)
-with open('StatsAnalysis/style.css') as f:
+with open('style.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
