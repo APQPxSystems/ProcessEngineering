@@ -95,7 +95,7 @@ if uploaded_file:
                 st.pyplot(fig)
 
 # Apply custom CSS (optional)
-with open('style.css') as f:
+with open('StatsAnalysis/style.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
