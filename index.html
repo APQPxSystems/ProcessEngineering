@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Apps by SystemsEng</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <style>
+        body, h1, h2, h3, h4, h5, h6 { font-family: "Lato", sans-serif; }
+        .w3-bar, h1, button { font-family: "Montserrat", sans-serif; }
+        /* Adjustments to make each grid occupy the whole screen */
+        #aboutSection, #whyAutomateSection {
+            height: calc(100vh - 116px); /* 116px is the height of the header */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .image-icon {
+            width: 300px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-blue w3-card w3-left-align w3-large">
+        <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+        <a href="https://doestatsanalysis.streamlit.app/" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Statistical Analysis Tool for DFA</a>
+        <a href="https://ppkanalysis.streamlit.app/" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">PPK Data Analysis</a>
+        <a href="https://prime-ra-identifier.streamlit.app/" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Prime and Reassy Identifier</a>
+    </div>
+</div>
+
+<!-- Header -->
+<header class="w3-container w3-blue w3-center" style="padding:200px 16px">
+    <h1 class="w3-margin w3-jumbo">P.E. WEB APP</h1>
+    <p class="w3-xlarge">PROCESS ENGINEERING | ME DEPARTMENT</p>
+</header>
+
+<!-- First Grid -->
+<div id="aboutSection" class="w3-row-padding w3-padding-64 w3-container"> 
+    <div class="w3-content">
+        <div class="w3-twothird">
+            <h1>About PE Web App</h1>
+            <h5 class="w3-padding-32">This web app is a collection of Process Engineering's automation tools. 
+                These automation tools run on Streamlit's cloud server and are not connected to any database. 
+                Therefore, any data uploaded will not be saved or collected and will vanish every time the app is refreshed.</h5>
+        </div>
+        <div class="w3-third w3-center">
+            <img src="https://img.freepik.com/premium-photo/robot_183364-10436.jpg?semt=ais_hybrid" alt="Anchor Icon" class="image-icon">
+        </div>
+    </div>
+</div>
+
+<!-- Second Grid -->
+<div id="whyAutomateSection" class="w3-row-padding w3-light-blue w3-padding-64 w3-container">
+    <div class="w3-content">
+        <div class="w3-third w3-center">
+            <img src="https://static.vecteezy.com/system/resources/previews/040/750/273/non_2x/ai-generated-cheerful-cute-black-standing-humanoid-robot-isolated-on-a-transparent-background-ai-generative-free-png.png" alt="Coffee Icon" class="image-icon">
+        </div>
+
+        <div class="w3-twothird">
+            <h1>Why Automate?</h1>
+            <h5 class="w3-padding-32">Embracing automation in the workplace is not just a time-saving strategy; 
+                it's a transformative leap towards efficiency, accuracy, and heightened productivity. 
+                By automating routine office tasks, you liberate valuable human resources from monotonous 
+                activities, allowing them to focus on creative problem-solving and strategic initiatives. 
+                Automation streamlines workflows, reduces errors, and accelerates processes, empowering your 
+                team to achieve more in less time. Embrace the future of work, unlock untapped potential, 
+                and revolutionize your office dynamics with the power of automation – where innovation meets 
+                simplicity, and every task becomes an opportunity for growth."</h5>
+            <h3>-Kent K. | Process Engineering Staff</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="w3-container w3-black w3-center" style="padding:0px 16px">
+    <h6 class="w3-margin w3-xlarge">MANUFACTURING ENGINEERING DEPARTMENT</h6>
+    <h1 class="w3-margin w3-large">Mitigating Encumbrances; Moving towards Excellence</h1>
+</div>
+
+<script>
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+    var x = document.getElementById("navDemo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else { 
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+
+// Scroll to a specific section
+function scrollToSection(sectionId) {
+    document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
