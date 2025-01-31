@@ -60,7 +60,7 @@ def main():
         
         # Show the images and give the option to download them
         for i, img in enumerate(images):
-            st.image(img, caption=f"Page {i+1}", use_column_width=True)
+            st.image(img, caption=f"Page {i+1}", use_container_width=True)
             
             # Convert image to bytes and provide download button
             img_byte_arr = io.BytesIO()
